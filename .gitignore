@@ -1,2 +1,4 @@
 .idea/
 finances-persistence.iml
+build/
+.gradle/

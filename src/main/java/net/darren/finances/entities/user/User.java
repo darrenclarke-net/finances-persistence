@@ -11,6 +11,10 @@ public class User {
     @PrimaryKey
     private String id;
 
-
     private Set<String> accountList;
+    private String userName;
+
+    public User(String userName) {
+        this.userName = userName;
+    }
 }
