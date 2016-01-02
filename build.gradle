@@ -1,13 +1,53 @@
 apply plugin: 'java'
+apply plugin: "jacoco"
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 version = '1.0'
 
 repositories {
     mavenCentral()
 }
 
+task aggregateTestReports(type: TestReport) {
+    destinationDir = testReportDir
+    reportOn test
+}
 
+configurations {
+    functionalTestsCompile.extendsFrom testCompile
+    functionalTestsRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    functionalTests {
+        java.srcDir file('src/functionalTests/java')
+        resources.srcDir file('src/functionalTests/resources')
+        resources.srcDir file('src/main/resources')
+        compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.functionalTestsCompile
+        runtimeClasspath += output + compileClasspath + configurations.functionalTestsRuntime
+    }
+}
+
+task functionalTests(type: Test) {
+    testClassesDir = sourceSets.functionalTests.output.classesDir
+    classpath = sourceSets.functionalTests.runtimeClasspath
+    reports.html.destination = file(reports.html.destination.toString() + "/functionaltests")
+    reports.junitXml.destination = file(reports.junitXml.destination.toString() + "/functionaltests")
+
+    reports.html.enabled = true
+    reports.junitXml.enabled = true
+}
+
+task jacocoFunctionalTestsReport(type: JacocoReport) {
+    sourceDirectories = files(sourceSets.main.java.srcDirs)
+    classDirectories = files(sourceSets.main.output.classesDir)
+    executionData = files('build/jacoco/functionalTest.exec')
+    reports {
+        html.destination = 'build/reports/jacoco/functionalTests'
+    }
+
+    dependsOn functionalTests
+}
 
 dependencies {
     compile group: 'com.sleepycat', name: 'je', version: '5.0.73'
@@ -23,3 +63,5 @@ test {
             'testDir' : "db"
     ]
 }
+
+check.dependsOn aggregateTestReports, jacocoTestReport, functionalTests, jacocoFunctionalTestsReport

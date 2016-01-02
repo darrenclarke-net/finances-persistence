@@ -1,4 +1,4 @@
-package net.darren.finances.entities.account;
+package net.darren.finances.account.entities;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
@@ -9,13 +9,13 @@ import org.joda.time.LocalDate;
 import java.util.Set;
 
 @Entity
-public class MonthTransactiongroup implements TransactionGroup {
+public class MonthTransactionGroupEntity implements TransactionGroupEntity {
 
     @PrimaryKey
     private String monthId;
 
     @SecondaryKey(relate = Relationship.ONE_TO_MANY)
-    private Set<Transaction> transactions;
+    private Set<TransactionEntity> transactionEntities;
 
     private String name;
     private LocalDate startDate;

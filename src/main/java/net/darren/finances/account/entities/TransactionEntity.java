@@ -1,4 +1,4 @@
-package net.darren.finances.entities.account;
+package net.darren.finances.account.entities;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
@@ -7,7 +7,7 @@ import com.sleepycat.persist.model.SecondaryKey;
 import org.joda.time.LocalDate;
 
 @Entity
-public class Transaction {
+public class TransactionEntity {
 
     @PrimaryKey
     private String id;
