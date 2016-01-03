@@ -4,6 +4,8 @@ apply plugin: "jacoco"
 sourceCompatibility = 1.8
 version = '1.0'
 
+project.ext.database_dir = project.buildDir.absolutePath + File.separator + "berkeley"
+
 repositories {
     mavenCentral()
 }
@@ -38,6 +40,12 @@ task functionalTests(type: Test) {
     reports.junitXml.enabled = true
 }
 
+functionalTests {
+    testLogging.showStandardStreams = true
+    systemProperties["testDir"] = project.ext.database_dir
+
+}
+
 task jacocoFunctionalTestsReport(type: JacocoReport) {
     sourceDirectories = files(sourceSets.main.java.srcDirs)
     classDirectories = files(sourceSets.main.output.classesDir)
@@ -54,14 +62,6 @@ dependencies {
     compile group: 'joda-time', name: 'joda-time', version: '2.9.1'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-test {
-    testLogging.showStandardStreams = true
-     systemProperties = [
-            'buildDir' : project.buildDir.absolutePath,
-            'testDir' : "db"
-    ]
 }
 
 check.dependsOn aggregateTestReports, jacocoTestReport, functionalTests, jacocoFunctionalTestsReport

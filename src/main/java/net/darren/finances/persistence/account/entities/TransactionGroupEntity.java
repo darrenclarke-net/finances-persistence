@@ -1,4 +1,4 @@
-package net.darren.finances.account.entities;
+package net.darren.finances.persistence.account.entities;
 
 
 public interface TransactionGroupEntity {
