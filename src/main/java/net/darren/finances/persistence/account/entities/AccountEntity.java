@@ -82,12 +82,12 @@ public class AccountEntity {
             accountEntity.setId(id.toString());
         }
 
-        public AccountEntity build() {
-            return accountEntity;
-        }
-
         public static Builder newInstance(UUID id, UUID userId) {
             return new Builder(id, userId);
+        }
+
+        public AccountEntity build() {
+            return accountEntity;
         }
 
         public Builder withName(String accountName) {
