@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class MonthTransactionGroupDao {
 
-    private final SecondaryIndex<String, MonthTransactionGroupCompositeKey, MonthTransactionGroupEntity> getTransactionGroupByAccountId;
+    private final SecondaryIndex<String, MonthTransactionGroupCompositeKey, MonthTransactionGroupEntity> groupEntityByAccount;
     private EntityStore entityStore;
 
     private PrimaryIndex<MonthTransactionGroupCompositeKey, MonthTransactionGroupEntity> primaryIndex;
@@ -21,7 +21,7 @@ public class MonthTransactionGroupDao {
     public MonthTransactionGroupDao(EntityStore entityStore) {
         this.entityStore = entityStore;
         this.primaryIndex = entityStore.getPrimaryIndex(MonthTransactionGroupCompositeKey.class, MonthTransactionGroupEntity.class);
-        this.getTransactionGroupByAccountId = entityStore.getSecondaryIndex(primaryIndex, String.class, "accountId");
+        this.groupEntityByAccount = entityStore.getSecondaryIndex(primaryIndex, String.class, "accountId");
     }
 
     public void addTransactionGroup(MonthTransactionGroupEntity monthTransactionGroupEntity) {
@@ -31,14 +31,14 @@ public class MonthTransactionGroupDao {
     public List<MonthTransactionGroupEntity> getAllFor(UUID accountId) {
         List<MonthTransactionGroupEntity> result = new ArrayList<>();
 
-        EntityCursor<MonthTransactionGroupEntity> transactionGroupEntities = null;
+        EntityCursor<MonthTransactionGroupEntity> groupsForAccount = null;
         try {
-            transactionGroupEntities = getTransactionGroupByAccountId.subIndex(accountId.toString()).entities();
-            for (MonthTransactionGroupEntity transactionGroupEntity : transactionGroupEntities) {
+            groupsForAccount = groupEntityByAccount.subIndex(accountId.toString()).entities();
+            for (MonthTransactionGroupEntity transactionGroupEntity : groupsForAccount) {
                 result.add(transactionGroupEntity);
             }
         } finally {
-            transactionGroupEntities.close();
+            groupsForAccount.close();
         }
         return result;
     }
